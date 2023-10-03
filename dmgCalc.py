@@ -25,10 +25,18 @@ def dmgCalc(ac, toHit, dLow, dHigh, dmgMod):
 
     dmgCount = 0
     for d in range(1,21):
-        if d == 20:   # Critical hit from dice being 20
+        if d == 1: # nat 1 miss will never cause damage
+            #print(d,'-')
+            continue            
+        elif (d == 20) and (ac-toHit <21):   # Nat 20 could either be a success or crit success find a way to test.
             dmg = (((dHigh-dLow)/2)+dmgMod+1)*2
-            #print(ac, d, 'Nat 20:',dmg,'damage.')
             dmgCount = dmgCount+dmg
+            print(d, 'Nat 20 + tohit =',(toHit+20),'matches or exceeds ac=',ac)
+        elif  d==20 :
+            #print(ac, d, 'Nat 20:',dmg,'damage.')
+            dmg = (((dHigh-dLow)/2)+dmgMod+1)
+            dmgCount = dmgCount+dmg
+            #print(ac, d, 'Nat 20:',dmg,'damage.')
             continue        
         elif toHit+d < ac:
             #print(d,'-')
@@ -48,19 +56,20 @@ def dmgCalc(ac, toHit, dLow, dHigh, dmgMod):
 #=============
 # Main Program
 #=============
-tHit = 11
+tHit = 10
+
 dLo = 1
 dHi = 12
 dmgMo = 8
 dmgDict = {}
 dmgDiffDic = {}
-for targAC in range(10,40):
+for targAC in range(1,50):
     dmgDict.setdefault(targAC,dmgCalc(targAC, tHit, dLo, dHi, dmgMo))
     
     if (targAC-1) in dmgDict: 
         dmgDiffDic.setdefault(targAC,(dmgDict[targAC]-dmgDict[targAC-1]))
     else: dmgDiffDic.setdefault(targAC,None)
-    print('AC =',targAC,'Avg DMG =',dmgCalc(targAC, tHit, dLo, dHi, dmgMo),'| difference from prev val =', dmgDiffDic[targAC])
+    #print('AC =',targAC,'Avg DMG =',dmgCalc(targAC, tHit, dLo, dHi, dmgMo),'| difference from prev val =', dmgDiffDic[targAC])
     
 lists = sorted(dmgDict.items())
 x,y = zip(*lists)
